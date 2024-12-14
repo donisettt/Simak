@@ -18,6 +18,9 @@
 
   $jml_uang_kas = mysqli_fetch_assoc(mysqli_query($conn, "SELECT sum(minggu_ke_1 + minggu_ke_2 + minggu_ke_3 + minggu_ke_4) as jml_uang_kas FROM uang_kas"));
   $jml_uang_kas = $jml_uang_kas['jml_uang_kas'];
+
+  $jml_pinjaman = mysqli_fetch_assoc(mysqli_query($conn, "SELECT sum(jumlah_pinjaman) as jml_pinjaman FROM pinjaman"));
+  $jml_pinjaman = $jml_pinjaman['jml_pinjaman']
 ?>
 
 <!DOCTYPE html>
@@ -132,8 +135,8 @@
             <div class="card shadow">
               <div class="card-body">
                 <h5><i class="text-danger"></i><i class="text-danger fas fa-university"></i> Pinjaman Loan</h5>
-                <h6 class="text-muted">Total Pinjaman: Rp. </h6>
-                <a href="#" class="btn btn-info btn-xs mt-1"> Cooming Soon</a>
+                <h6 class="text-muted">Pinjaman: Rp. <?= number_format($jml_pinjaman ?? 0); ?></h6>
+                <a href="pinjaman.php" class="btn btn-info btn-xs mt-1"><i class="fa fa-info-circle fa-align-justify"></i> Selengkapnya</a>
               </div>
             </div>
           </div>

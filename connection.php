@@ -292,6 +292,38 @@ function deletePendapatan($id) {
 	}
 }
 
+// FUnction Add Pinjaman
+function addPinjaman($data) {
+    global $conn;
+    
+    // Validasi dan pemberian nilai default
+    $kd_invoice = isset($data['kd_invoice']) ? htmlspecialchars($data['kd_invoice']) : '';
+    $nama_mahasiswa = isset($data['nama_mahasiswa']) ? htmlspecialchars($data['nama_mahasiswa']) : '';
+    $tujuan_pinjam = isset($data['tujuan_pinjam']) ? htmlspecialchars($data['tujuan_pinjam']) : '';
+    $jumlah_pinjaman = isset($data['jumlah_pinjaman']) ? htmlspecialchars($data['jumlah_pinjaman']) : '';
+    $tanggal_pinjam = isset($data['tanggal_pinjam']) ? htmlspecialchars($data['tanggal_pinjam']) : '';
+    $status = isset($data['status']) ? htmlspecialchars($data['status']) : '';
+    
+    // Tentukan jatuh_tempo 30 hari setelah tanggal_pinjam
+    if (!empty($tanggal_pinjam)) {
+        $jatuh_tempo = date('Y-m-d', strtotime($tanggal_pinjam . ' +30 days'));
+    } else {
+        $jatuh_tempo = NULL; // Atau bisa kosong jika ingin membiarkan nilai NULL
+    }
+
+    // Query untuk menyimpan data pinjaman
+    $query = "INSERT INTO pinjaman (kd_invoice, nama_mahasiswa, tujuan_pinjam, jumlah_pinjaman, tanggal_pinjam, jatuh_tempo, status) 
+              VALUES ('$kd_invoice', '$nama_mahasiswa', '$tujuan_pinjam', '$jumlah_pinjaman', '$tanggal_pinjam', '$jatuh_tempo', '$status')";
+    
+    if (mysqli_query($conn, $query)) {
+        return mysqli_affected_rows($conn); // Mengembalikan jumlah baris yang terpengaruh
+    } else {
+        // Jika terjadi kesalahan pada query
+        echo "Error: " . mysqli_error($conn);
+        return 0;
+    }
+}
+
 // Function Tambah Bulan Pembayaran
 
 function addBulanPembayaran($data) {

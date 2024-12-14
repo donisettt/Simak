@@ -133,7 +133,7 @@ $jml_pendapatan = $jml_pendapatan['jml_pendapatan'];
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="pinjaman.php" class="nav-link">
                   <i class="fas fas fa-university nav-icon"></i>
                   <p>Pinjaman Loan</p>
                 </a>
