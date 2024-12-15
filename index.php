@@ -20,7 +20,7 @@
   $jml_uang_kas = $jml_uang_kas['jml_uang_kas'];
 
   $jml_pinjaman = mysqli_fetch_assoc(mysqli_query($conn, "SELECT sum(jumlah_pinjaman) as jml_pinjaman FROM pinjaman"));
-  $jml_pinjaman = $jml_pinjaman['jml_pinjaman']
+  $jml_pinjaman = $jml_pinjaman['jml_pinjaman'];
 ?>
 
 <!DOCTYPE html>

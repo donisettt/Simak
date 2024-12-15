@@ -151,14 +151,22 @@
                                   </div>
                                   <div class="modal-body">
                                     <div class="form-group">
-                                      <label for="jumlah_pengeluaran<?= $dp['id_pengeluaran']; ?>">Jumlah Pengeluaran</label>
-                                      <input type="number" name="jumlah_pengeluaran" id="jumlah_pengeluaran<?= $dp['id_pengeluaran']; ?>" required class="form-control" placeholder="Rp." value="<?= $dp['jumlah_pengeluaran']; ?>">
+                                        <label for="jumlah_pengeluaran<?= $dp['id_pengeluaran']; ?>">Jumlah Pengeluaran</label>
+                                        <input type="number" name="jumlah_pengeluaran" id="jumlah_pengeluaran<?= $dp['id_pengeluaran']; ?>" required class="form-control" placeholder="Rp." value="<?= $dp['jumlah_pengeluaran']; ?>">
                                     </div>
                                     <div class="form-group">
-                                      <label for="keterangan<?= $dp['id_pengeluaran']; ?>">Keterangan</label>
-                                      <textarea name="keterangan" id="keterangan<?= $dp['id_pengeluaran']; ?>" required class="form-control"><?= $dp['keterangan']; ?></textarea>
+                                        <label for="tanggal_pengeluaran<?= $dp['id_pengeluaran']; ?>">Tanggal Pengeluaran</label>
+                                        <input type="date" name="tanggal_pengeluaran" id="tanggal_pengeluaran<?= $dp['id_pengeluaran']; ?>" required class="form-control" value="<?= $dp['tanggal_pengeluaran']; ?>">
                                     </div>
-                                  </div>
+                                    <div class="form-group">
+                                        <label for="keterangan<?= $dp['id_pengeluaran']; ?>">Keterangan</label>
+                                        <textarea name="keterangan" id="keterangan<?= $dp['id_pengeluaran']; ?>" required class="form-control"><?= $dp['keterangan']; ?></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bukti_transaksi<?= $dp['id_pengeluaran']; ?>">Bukti Transaksi</label>
+                                        <input type="file" name="bukti_transaksi" id="bukti_transaksi<?= $dp['id_pengeluaran']; ?>" value="<?= $dp['bukti_transaksi']; ?>" required class="form-control">
+                                    </div>
+                                </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-fw fa-times"></i> Close</button>
                                     <button type="submit" name="btnEditPengeluaran" class="btn btn-primary"><i class="fas fa-fw fa-save"></i> Save</button>

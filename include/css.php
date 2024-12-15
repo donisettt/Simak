@@ -18,3 +18,7 @@
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 <!-- Favicon -->
 <link rel="icon" href="assets/img/img_properties/logo.png">
+<script
+      src="https://kit.fontawesome.com/64d58efce2.js"
+      crossorigin="anonymous">
+</script>

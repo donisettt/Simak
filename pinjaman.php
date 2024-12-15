@@ -6,8 +6,7 @@
   $result = $conn->query($mhs);
   // Fungsi untuk menghasilkan kode unik
   function generateKodeInvoice($nim) {
-    $kodeUnik = strtoupper(substr(md5(uniqid(rand(), true)), 0, 6)); // Kode unik 6 karakter
-    return "PNJTIF-{$nim}-{$kodeUnik}";
+    return "PNJTIF-{$nim}";
   }
 
   // Periksa apakah form sudah diisi
@@ -16,6 +15,13 @@
   if (isset($_POST['btnEditPendapatan'])) {
     if (editPendapatan($_POST) > 0) {
       setAlert("Berhasil Diubah", "Pinjaman telah diubah!", "success");
+      header("Location: pinjaman.php");
+    }
+  }
+
+  if (isset($_POST['btnBayar'])) {
+    if (bayarPinjaman($_POST) > 0) {
+      setAlert("Berhasil Bayar", "Pinjaman telah dibayar!", "success");
       header("Location: pinjaman.php");
     }
   }
@@ -148,6 +154,7 @@
                     <th>Nama Mahasiswa</th>
                     <th>Tujuan Pinjaman</th>
                     <th>Jumlah Pinjaman</th>
+                    <th>Jumlah Bayar</th>
                     <th>Tanggal Pinjam</th>
                     <th>Jatuh Tempo</th>
                     <th>Status</th>
@@ -165,6 +172,7 @@
                       <td><?= ucwords(htmlspecialchars_decode($p['nama_mahasiswa'])); ?></td>
                       <td><?= $p['tujuan_pinjam']; ?></td>
                       <td>Rp. <?= $p['jumlah_pinjaman']; ?></td>
+                      <td>Rp. <?= $p['jumlah_bayar']; ?></td>
                       <td><?= $p['tanggal_pinjam']; ?></td>
                       <td><?= $p['jatuh_tempo']; ?></td>
                       <td>
@@ -180,51 +188,51 @@
                       <?php if ($_SESSION['id_jabatan'] === '1' || $_SESSION['id_jabatan'] === '2' || $_SESSION['id_jabatan'] === '4'): ?>
                         <td>
                           <!-- Button trigger modal -->
-                          <a href="ubah_pinjaman.php?kd_invoice=<?= $p['kd_invoice']; ?>" class="badge badge-success" data-toggle="modal" data-target="#editPinjaman<?= $p['kd_invoice']; ?>">
-                            <i class="fas fa-fw fa-edit"></i>
+                          <a href="bayar_pinjaman.php?kd_invoice=<? $p['kd_invoice']; ?>" class="badge badge-success" data-toggle="modal" data-target="#bayarPinjaman<?= $p['kd_invoice']; ?>">
+                            <i class="fas fa-money-bill-wave"></i> Bayar
                           </a>
                           <!-- Modal -->
-                          <!-- <div class="modal fade" id="editPendapatan<?= $p['id_pendapatan']; ?>" tabindex="-1" role="dialog" aria-labelledby="editPendapatan<?= $p['id_pendapatan']; ?>" aria-hidden="true">
+                          <!-- Modal Bayar -->
+                          <div class="modal fade" id="bayarPinjaman<?= $p['kd_invoice']; ?>" tabindex="-1" role="dialog" aria-labelledby="bayarPinjamanLabel<?= $p['kd_invoice']; ?>" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                               <form method="post">
-                                <input type="hidden" name="id_pendapatan" value="<?= $p['id_pendapatan']; ?>">
+                                <!-- Hidden Input untuk ID Pinjaman -->
+                                <input type="hidden" name="kd_invoice" value="<?= $p['kd_invoice']; ?>">
+
                                 <div class="modal-content">
                                   <div class="modal-header">
-                                    <h5 class="modal-title" id="editPendapatanModalLabel<?= $p['id_pendapatan']; ?>">Ubah Pendapatan</h5>
+                                    <h5 class="modal-title" id="bayarPinjamanLabel<?= $p['kd_invoice']; ?>">Form Pembayaran</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                       <span aria-hidden="true">&times;</span>
                                     </button>
                                   </div>
                                   <div class="modal-body">
                                     <div class="form-group">
-                                      <label for="nama_pendapatan<?= $p['id_pendapatan']; ?>">Nama Pendapatan</label>
-                                      <input type="text" id="nama_pendapatan<?= $p['id_pendapatan']; ?>" value="<?= $p['nama_pendapatan']; ?>" name="nama_pendapatan" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                      <label for="keterangan<?= $p['id_pendapatan']; ?>">Keterangan</label>
-                                      <input type="text" name="keterangan" value="<?= $p['keterangan']; ?>" id="keterangan<?= $p['id_pendapatan']; ?>" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                      <label for="jumlah_pendapatan<?= $p['id_pendapatan']; ?>">Jumlah Pendapatan</label>
-                                      <input type="number" name="jumlah_pendapatan" value="<?= $p['jumlah_pendapatan']; ?>" id="jumlah_pendapatan<?= $p['id_pendapatan']; ?>" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                      <label for="tanggal_pendapatan<?= $p['id_pendapatan']; ?>">Tanggal Pendapatan</label>
-                                      <input type="date" name="tanggal_pendapatan" value="<?= $p['tanggal_pendapatan']; ?>" id="tanggal_pendapatan<?= $p['id_pendapatan']; ?>" class="form-control">
+                                      <label for="jumlah_bayar<?= $p['kd_invoice']; ?>">Jumlah Pembayaran</label>
+                                      <input type="number" 
+                                            id="jumlah_bayar<?= $p['kd_invoice']; ?>" 
+                                            name="jumlah_bayar" 
+                                            value="<?= $p['jumlah_bayar']; ?>"
+                                            class="form-control jumlah-bayar" 
+                                            placeholder="Masukkan jumlah pembayaran" 
+                                            required 
+                                            data-jumlah-pinjaman="<?= $p['jumlah_pinjaman']; ?>" 
+                                            oninput="validateJumlahBayar(this, <?= $p['kd_invoice']; ?>)">
+                                      <small id="error-message-<?= $p['kd_invoice']; ?>" class="text-danger"></small>
                                     </div>
                                   </div>
                                   <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-fw fa-times"></i> Close</button>
-                                    <button type="submit" class="btn btn-primary" name="btnEditPendapatan"><i class="fas fa-fw fa-save"></i> Save</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-fw fa-times"></i> Batal</button>
+                                    <button type="submit" class="btn btn-success" name="btnBayar"><i class="fas fa-fw fa-money-check"></i> Bayar</button>
                                   </div>
                                 </div>
                               </form>
                             </div>
                           </div>
-                          <?php if ($_SESSION['id_jabatan'] == '1' || $_SESSION['id_jabatan'] == '2'): ?>
+                          <!-- <?php if ($_SESSION['id_jabatan'] == '1' || $_SESSION['id_jabatan'] == '2'): ?>
                             <a data-nama="<?= $p['nama_pendapatan']; ?>" class="btn-delete badge badge-danger" href="hapus_pendapatan.php?id_pendapatan=<?= $p['id_pendapatan']; ?>"><i class="fas fa-fw fa-trash"></i> Hapus</a>
-                          <?php endif ?>
-                        </td> -->
+                          <?php endif ?> -->
+                        </td>
                       <?php endif ?>
                     </tr>
                   <?php endforeach ?>
@@ -249,7 +257,7 @@
         const nim = this.options[this.selectedIndex].getAttribute('data-nim'); // Ambil NIM dari atribut data-nim
         if (nim) {
             const kodeUnik = Math.random().toString(36).substr(2, 6).toUpperCase(); // Kode unik
-            document.getElementById('kd_invoice').value = `PNJTIF-${nim}-${kodeUnik}`;
+            document.getElementById('kd_invoice').value = `PNJTIF-${nim}`;
         } else {
             document.getElementById('kd_invoice').value = ''; // Reset jika tidak ada mahasiswa dipilih
         }

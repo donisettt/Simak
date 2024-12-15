@@ -324,6 +324,31 @@ function addPinjaman($data) {
     }
 }
 
+// Bayar Pinjaman
+function bayarPinjaman($data) {
+    global $conn;
+
+    $kd_invoice = $data['kd_invoice']; // Ambil kode invoice dari form
+    $jumlah_bayar = $data['jumlah_bayar']; // Ambil jumlah pembayaran dari form
+
+    // Ambil total pinjaman dari database
+    $query = mysqli_query($conn, "SELECT jumlah_pinjaman, jumlah_bayar FROM pinjaman WHERE kd_invoice = '$kd_invoice'");
+    $data_pinjaman = mysqli_fetch_assoc($query);
+    $total_pinjaman = $data_pinjaman['jumlah_pinjaman'];
+    $jumlah_bayar_sebelumnya = $data_pinjaman['jumlah_bayar'];
+
+    // Hitung total pembayaran setelah ditambah dengan pembayaran baru
+    $jumlah_bayar_total = $jumlah_bayar_sebelumnya + $jumlah_bayar;
+
+    // Tentukan status pembayaran
+    $status = ($jumlah_bayar_total >= $total_pinjaman) ? 'Lunas' : 'Belum Lunas';
+
+    // Update pembayaran dan status di database
+    mysqli_query($conn, "UPDATE pinjaman SET jumlah_bayar = '$jumlah_bayar_total', status = '$status' WHERE kd_invoice = '$kd_invoice'");
+
+    return mysqli_affected_rows($conn);
+}
+
 // Function Tambah Bulan Pembayaran
 
 function addBulanPembayaran($data) {
@@ -642,8 +667,8 @@ function editPengeluaran($data) {
 	$id_pengeluaran = htmlspecialchars($data['id_pengeluaran']);
 	$fetch_sql = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM pengeluaran WHERE id_pengeluaran = '$id_pengeluaran'"));
 	$jumlah_pengeluaran = htmlspecialchars($data['jumlah_pengeluaran']);
+	$tanggal_pengeluaran = htmlspecialchars($data['tanggal_pengeluaran']);
 	$keterangan = htmlspecialchars($data['keterangan']);
-	$tanggal_pengeluaran = time();
 	$query = mysqli_query($conn, "UPDATE pengeluaran SET jumlah_pengeluaran = '$jumlah_pengeluaran', keterangan = '$keterangan', tanggal_pengeluaran = '$tanggal_pengeluaran', id_user = '$id_user' WHERE id_pengeluaran = '$id_pengeluaran'");
 	riwayatPengeluaran($id_user, "telah mengubah pengeluaran " . $keterangan . " dari biaya Rp. " . number_format($fetch_sql['jumlah_pengeluaran']) . " menjadi Rp. " . number_format($jumlah_pengeluaran));
   	return mysqli_affected_rows($conn);
